@@ -7,6 +7,7 @@ import {useForm, SubmitHandler, Resolver} from 'react-hook-form';
 import { yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { string } from 'yup/lib/locale';
+import { ErrorSharp } from '@material-ui/icons';
 
 interface IFormInputs {
   email: string,
@@ -26,8 +27,8 @@ const Home: NextPage = () => {
   const formSubmitHandler: SubmitHandler<IFormInputs> = (data: IFormInputs) => {
     console.log(data)
   }
-  console.log(errors)
-  console.log(watch('email'))
+  // console.log(errors)
+  // console.log(watch('email'))
 
   return (
     <div className={styles.container}>
@@ -39,13 +40,13 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <form onSubmit={handleSubmit(formSubmitHandler)}>
-          <input defaultValue='example@email.com' {...register('email', {required: true})} />
+          <input defaultValue='example@email.com' {...register('email')} />
           <br/>
-          {errors.email && <span>This field is required.</span>}
+          {errors.email && errors.email?.message && <span>{errors.email.message}</span>}
           <br/>
-          <input type='password' placeholder='password' {...register('password', {required: true})} />
+          <input type='password' placeholder='password' {...register('password')} />
           <br/>
-          {errors.password && <span>This field is required.</span>}
+          {errors.password && errors.password?.message && <span>{errors.password.message}</span>}
           <br/>
           <input type='submit' />
         </form>
