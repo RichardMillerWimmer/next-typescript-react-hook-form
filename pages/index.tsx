@@ -3,11 +3,10 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-import {useForm, SubmitHandler, Resolver} from 'react-hook-form';
+import {useForm, SubmitHandler, Controller} from 'react-hook-form';
 import { yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { string } from 'yup/lib/locale';
-import { ErrorSharp } from '@material-ui/icons';
+import {TextField} from '@material-ui/core';
 
 interface IFormInputs {
   email: string,
@@ -22,13 +21,13 @@ const scheme: yup.SchemaOf<IFormInputs> = yup.object().shape({
 // const resolver: Resolver<IFormInputs> = yupResolver(scheme);
 
 const Home: NextPage = () => {
-  const { register, handleSubmit, watch, formState: {errors} } = useForm<IFormInputs>({ resolver: yupResolver(scheme)})
+  const { register, handleSubmit, watch, control, formState: {errors} } = useForm<IFormInputs>({ resolver: yupResolver(scheme)})
 
   const formSubmitHandler: SubmitHandler<IFormInputs> = (data: IFormInputs) => {
     console.log(data)
   }
   // console.log(errors)
-  // console.log(watch('email'))
+  console.log(watch('email'))
 
   return (
     <div className={styles.container}>
@@ -40,13 +39,11 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <form onSubmit={handleSubmit(formSubmitHandler)}>
-          <input defaultValue='example@email.com' {...register('email')} />
+          <Controller name='email' control={control} defaultValue='' render={({field}) => (<TextField {...field} label='email' variant='outlined' error={!!errors.email} helperText={errors.email ? errors.email?.message : ''}/>)} />
+          <br />
+          <br />
+          <Controller name='password' control={control} defaultValue='' render={({field}) => (<TextField {...field} label='password' variant='outlined' type='password' error={!!errors.password} helperText={errors.password ? errors.password?.message : ''}/>)} />
           <br/>
-          {errors.email && errors.email?.message && <span>{errors.email.message}</span>}
-          <br/>
-          <input type='password' placeholder='password' {...register('password')} />
-          <br/>
-          {errors.password && errors.password?.message && <span>{errors.password.message}</span>}
           <br/>
           <input type='submit' />
         </form>
