@@ -3,10 +3,12 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-import {useForm, SubmitHandler, Controller} from 'react-hook-form';
+import {useForm, SubmitHandler, FormProvider, Controller} from 'react-hook-form';
 import { yupResolver} from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import {TextField} from '@material-ui/core';
+
+import Input from './components/input';
+import { TextField } from '@material-ui/core';
 
 interface IFormInputs {
   email: string,
@@ -21,14 +23,12 @@ const scheme: yup.SchemaOf<IFormInputs> = yup.object().shape({
 // const resolver: Resolver<IFormInputs> = yupResolver(scheme);
 
 const Home: NextPage = () => {
-  const { register, handleSubmit, watch, control, formState: {errors} } = useForm<IFormInputs>({ resolver: yupResolver(scheme)})
+  const methods = useForm<IFormInputs>({ resolver: yupResolver(scheme)})
 
   const formSubmitHandler: SubmitHandler<IFormInputs> = (data: IFormInputs) => {
     console.log(data)
   }
-  // console.log(errors)
-  console.log(watch('email'))
-
+  
   return (
     <div className={styles.container}>
       <Head>
@@ -38,15 +38,18 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <form onSubmit={handleSubmit(formSubmitHandler)}>
-          <Controller name='email' control={control} defaultValue='' render={({field}) => (<TextField {...field} label='email' variant='outlined' error={!!errors.email} helperText={errors.email ? errors.email?.message : ''}/>)} />
-          <br />
-          <br />
-          <Controller name='password' control={control} defaultValue='' render={({field}) => (<TextField {...field} label='password' variant='outlined' type='password' error={!!errors.password} helperText={errors.password ? errors.password?.message : ''}/>)} />
-          <br/>
-          <br/>
-          <input type='submit' />
-        </form>
+        <FormProvider {...methods}>
+          <form onSubmit={methods.handleSubmit(formSubmitHandler)}>
+          {/* <Controller name='email' control={methods.control} defaultValue='' render={({field}) => (<TextField {...field} label='email' variant='outlined' error={!!methods.formState.errors.email} helperText={methods.formState.errors.email ? methods.formState.errors.email?.message : ''}/>)} />   
+            <br />
+            <br />
+            <Controller name='password' control={methods.control} defaultValue=''  render={({field}) => (<TextField {...field} label='password' type='password' variant='outlined' error={!!methods.formState.errors.password} helperText={methods.formState.errors.password ? methods.formState.errors.password?.message : ''}/>)} />   
+            <br/>
+            <br/> */}
+            <Input />
+            <input type='submit' />
+          </form>
+        </FormProvider>
       </main>
 
       <footer className={styles.footer}>
