@@ -3,15 +3,25 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-import {useForm, SubmitHandler} from 'react-hook-form';
+import {useForm, SubmitHandler, Resolver} from 'react-hook-form';
+import { yupResolver} from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+import { string } from 'yup/lib/locale';
 
 interface IFormInputs {
   email: string,
   password: string
 }
 
+const scheme: yup.SchemaOf<IFormInputs> = yup.object().shape({
+  email: yup.string().email().required(),
+  password: yup.string().min(8).max(20).required()
+})
+
+// const resolver: Resolver<IFormInputs> = yupResolver(scheme);
+
 const Home: NextPage = () => {
-  const { register, handleSubmit, watch, formState: {errors} } = useForm<IFormInputs>()
+  const { register, handleSubmit, watch, formState: {errors} } = useForm<IFormInputs>({ resolver: yupResolver(scheme)})
 
   const formSubmitHandler: SubmitHandler<IFormInputs> = (data: IFormInputs) => {
     console.log(data)
